@@ -2,7 +2,7 @@
 
 ## Executive summary
 
-A two-week campaign used the KIT to review security-critical paths in a large set of open-source repositories. The assigned queue contained 158 entries representing 157 distinct repository URLs. Five human owners supervised the work. The repositories span more than 70 million estimated lines of code across 11 primary languages. The campaign recorded 85 defects.
+An approximately two-week campaign used the KIT to review security-critical paths in a large set of open-source repositories. The assigned queue contained 158 entries representing 157 distinct repository URLs. Five human owners supervised the work. The repositories span more than 70 million estimated lines of code across 11 primary languages. The campaign recorded 85 defects.
 
 The KIT combines intent recovery, security invariant design, focused source analysis, lightweight formal models, proof construction, and targeted validation. It helped reviewers move from a large repository to a small set of security claims, then trace each claim through implementation paths that control authority, assets, process execution, or irreversible state.
 
@@ -16,9 +16,9 @@ The repository set covers Python, TypeScript, JavaScript, Go, Rust, Solidity, Ja
 
 Each review began with repository acquisition and subsystem mapping. The reviewer identified security-critical assets and roles, recovered intended behavior from public documentation and tests, and wrote explicit invariants for the selected scope. The KIT then guided call-path analysis, dataflow checks, state-transition review, and proof construction. Small canaries were used where a local check could distinguish a real implementation flaw from a speculative proof gap.
 
-The formal layer used K definitions and reachability claims for relevant language fragments. Most packages were constructed proof artifacts rather than completed machine-checked proofs. This distinction matters. A constructed claim organizes the security argument and exposes missing preconditions. It does not carry the assurance of a successful proof run. The campaign retained 574 evidence files, including 110 K files, to preserve the reasoning behind the findings.
+The formal layer used K definitions and reachability claims for relevant language fragments. Most packages were constructed proof artifacts rather than completed machine-checked proofs. A constructed claim organizes the security argument and exposes missing preconditions. It does not carry the assurance of a successful proof run. The campaign retained 574 evidence files, including 110 K files, to preserve the reasoning behind the findings.
 
-Human work centered on scope selection, setup recovery, evidence review, severity decisions, and report preparation. No normalized timesheet was collected. Person-hour totals therefore cannot be stated reliably. The available trace for one owner records 29 review sessions, 92 continuation cycles, and 56 repository evidence directories over eight calendar days. This supports the description of an AI-heavy review supervised by five people over roughly two weeks. It should not be interpreted as five full-time reviewers working for ten person-weeks.
+Human work centered on scope selection, setup recovery, evidence review, severity decisions, and report preparation. No normalized timesheet was collected, so person-hour totals are unavailable. The trace for one owner records 29 review sessions, 92 continuation cycles, and 56 repository evidence directories over eight calendar days. These records show an AI-heavy review with intermittent human supervision. No evidence supports ten person-weeks of full-time labor.
 
 The campaign aggregate is 85 defects. The export does not provide stable per-defect identifiers or a normalized severity table, so this report does not infer a severity distribution. The four case studies below have pinned review commits and retained KIT evidence packages. Langflow and Mastra include targeted validation canaries. Daytona and Onyx are source-confirmed boundary failures whose full deployment impact remains conditional.
 
@@ -30,7 +30,7 @@ Langflow lets authenticated users configure stdio-based MCP servers. The reviewe
 
 The execution path later joined the command and arguments into one string. On Unix it passed that string through `bash -c`, with an equivalent command-shell wrapper on Windows. Syntax placed after the first token in the multi-word `command` field therefore reached a shell without passing through the argument checks. The same syntax was rejected when placed in `args`.
 
-Where MCP server configuration remained unlocked, its default at the reviewed commit, an ordinary authenticated user could reach backend command execution with the service account's privileges. The result was an authenticated remote-code-execution condition. The risk included application data, configured credentials available to the process, and access to adjacent services reachable from the host.
+At the reviewed commit, `mcp_servers_locked` defaulted to `False`. An ordinary authenticated user could reach backend command execution with the service account's privileges. The risk included application data, process credentials, and adjacent services reachable from the host.
 
 The KIT compared validation grammar with execution grammar. The security claim required every token interpreted by the shell to pass one policy before execution. Field-level review looked sound in isolation. End-to-end dataflow showed that validation tokenized only the start of `command`, while execution interpreted the complete recomposed string. A non-destructive canary confirmed the acceptance difference between the two fields.
 
@@ -44,9 +44,9 @@ Mastra allows developers to register custom API routes that invoke agents, model
 
 At the reviewed commit, direct Express, Hono, Fastify, and Koa adapter paths did not always derive the custom-route authentication map from the configured routes. The Express adapter ran route authentication only when that map identified the matched path as protected. When the map was absent, the shared middleware also returned early for paths outside the global protected patterns. A custom route outside the default `/api/*` pattern could reach its handler even though the route had never opted out of authentication.
 
-The impact depends on the handler, which is why this boundary is serious. Public examples include completion routes that can invoke models, agents, and tools. An unauthenticated caller could consume provider resources, retrieve application data exposed by the handler, or trigger tool side effects that the developer expected to sit behind Mastra authentication.
+Handler contents determine the impact. Public examples include completion routes that can invoke models, agents, and tools. An unauthenticated caller could consume provider resources, retrieve application data, or trigger tool side effects that the developer expected to sit behind Mastra authentication.
 
-The KIT stated the rule in one line before following adapter code. Every registered custom route must authenticate unless it explicitly sets `requiresAuth: false`. It then compared adapters that constructed route-auth metadata with direct adapters that did not. A targeted canary called Mastra's actual core authentication middleware. With no custom-route map, the request advanced and authentication was never called. Adding the expected map entry produced a 401 response. This gave the finding both a source-level path and a controlled implementation check.
+The KIT stated the rule before following adapter code. Every registered custom route must authenticate unless it explicitly sets `requiresAuth: false`. It then compared adapters that constructed route-auth metadata with direct adapters that did not. A targeted canary called Mastra's actual core authentication middleware. With no custom-route map, the request advanced and authentication was never called. Adding the expected map entry produced a 401 response.
 
 ## Case study 3
 
@@ -68,9 +68,9 @@ Onyx stores files produced by image generation and its Python execution tool in 
 
 The access function contained a separate branch for that origin. If a matching FileStore record existed, it returned access without linking the file to the requesting user, chat, session, or document permissions. Any authenticated user who obtained the file ID could pass the check and receive the stored bytes.
 
-Generated artifacts are not necessarily harmless images. Code execution can produce reports, CSV files, transformed uploads, and outputs derived from private context. The defect can therefore cross user boundaries and disclose material that belongs to another session. Exploitation requires the target file ID. The retained evidence did not establish that IDs were guessable or exposed through a second flaw, so the report treats the authorization failure as confirmed and its P1 impact as conditional.
+Generated artifacts include reports, CSV files, transformed uploads, and outputs derived from private context. The defect can therefore cross user boundaries and disclose material that belongs to another session. Exploitation requires the target file ID. The retained evidence did not establish that IDs were guessable or exposed through a second flaw, so the report treats the authorization failure as confirmed and its P1 impact as conditional.
 
-The KIT classified generated files as authority-bearing objects and required every download to resolve to an owner or an explicit sharing rule. It traced the returned tool URL into the common download endpoint, then compared each authorization branch. Ownership and ACL branches preserved context. The origin-only branch discarded it. That single exception made the file-access claim fail and identified a narrow repair boundary without requiring a broad review of the storage system.
+The KIT classified generated files as authority-bearing objects and required every download to resolve to an owner or an explicit sharing rule. It traced the returned tool URL into the common download endpoint, then compared each authorization branch. Ownership and ACL branches preserved context. The origin-only branch discarded it, causing the file-access claim to fail.
 
 ## Evidence boundaries
 
@@ -80,6 +80,4 @@ The K packages for all four cases were constructed rather than machine-checked. 
 
 ## Conclusion
 
-The sweep used the KIT to turn public security intent into explicit invariants and trace them through large, unrelated codebases. The selected cases found backend command execution, an authentication fail-open, a stale privacy decision, and a cross-user artifact authorization gap.
-
-The campaign shows the KIT's value as a triage and evidence-production system for large review queues. Pinned revisions and focused canaries made the strongest findings suitable for deeper review. Deployment testing, machine-checked proofs, and maintainer remediation remain separate work.
+Across 158 assigned entries, the KIT converted public intent into security invariants and focused source checks. The campaign recorded 85 defects. Four session-backed cases exposed backend command execution, an authentication fail-open, a stale privacy decision, and a cross-user artifact authorization gap. Pinned commits and focused canaries made the strongest claims reviewable. Daytona and Onyx still require full deployment reproductions, and the K packages remain constructed rather than machine-checked.
