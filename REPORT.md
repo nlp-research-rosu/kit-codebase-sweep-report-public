@@ -4,7 +4,7 @@
 
 An approximately two-week campaign used the KIT to review security-critical paths in a large set of open-source repositories. The assigned queue contained 158 entries representing 157 distinct repository URLs. Five human owners supervised the work. The repositories span more than 70 million estimated lines of code across 11 primary languages. The original campaign headline reported 85 defects.
 
-The KIT combines intent recovery, security invariant design, focused source analysis, lightweight formal models, proof construction, and targeted validation. It helped reviewers move from a large repository to a small set of security claims, then trace each claim through implementation paths that control authority, assets, process execution, or irreversible state.
+The KIT is the collective name for the prompts, skills, procedures, and instructions used during the sweep. It combines intent recovery, security invariant design, focused source analysis, lightweight formal models, proof construction, and targeted validation. It helped reviewers move from a large repository to a small set of security claims, then trace each claim through implementation paths that control authority, assets, process execution, or irreversible state.
 
 The campaign was a scoped security sweep. It did not attempt exhaustive line-by-line audit coverage of every repository. The 70 million line figure describes the size of the portfolio under review. It does not represent the number of lines manually inspected or formally verified.
 
@@ -20,7 +20,7 @@ Each review began with repository acquisition and subsystem mapping. The reviewe
 
 The formal layer used K definitions and reachability claims for relevant language fragments. Most packages were constructed proof artifacts rather than completed machine-checked proofs. A constructed claim organizes the security argument and exposes missing preconditions. It does not carry the assurance of a successful proof run. The campaign retained 574 evidence files, including 110 K files, to preserve the reasoning behind the findings.
 
-Human work centered on scope selection, setup recovery, evidence review, severity decisions, and report preparation. No normalized timesheet was collected, so person-hour totals are unavailable. The trace for one owner records 29 review sessions, 92 continuation cycles, and 56 repository evidence directories over eight calendar days. These records show an AI-heavy review with intermittent human supervision. No evidence supports ten person-weeks of full-time labor.
+Human work centered on scope selection, setup recovery, evidence review, severity decisions, and report preparation. The approximately two-week campaign duration is David Bucur's recollection rather than a timestamped metric. No normalized timesheet was collected, so person-hour totals are unavailable. The trace for one owner records 29 review sessions, 92 continuation cycles, and 56 repository evidence directories over eight calendar days. These records show an AI-heavy review with intermittent human supervision. No evidence supports ten person-weeks of full-time labor.
 
 The original campaign headline supplied for this report was 85 defects. The current export does not match that headline. A conservative review of its 147 completed rows produced the following table-derived severity distribution.
 
@@ -40,9 +40,7 @@ The descriptions show recurring defect classes. P1 entries cover financial theft
 
 The four case studies below have pinned review commits and retained KIT evidence packages. Langflow and Mastra include targeted validation canaries. Daytona and Onyx are source-confirmed boundary failures whose full deployment impact remains conditional.
 
-## Case study 1
-
-### Langflow validated one command representation and executed another
+## Case study 1. Langflow validated one command representation and executed another
 
 Langflow lets authenticated users configure stdio-based MCP servers. The reviewed code allowed a multi-word `command` field for frontend compatibility. It checked only the first token of that field against an executable allowlist. Separate validators rejected dangerous syntax in the `args` array.
 
@@ -54,9 +52,9 @@ The KIT compared validation grammar with execution grammar. The security claim r
 
 This case had an exact reviewed commit in the retained session record. Later upstream security work centralized MCP stdio policy and added checks closer to execution. The analysis here applies to the reviewed commit and does not characterize the current Langflow release.
 
-## Case study 2
+[Read the detailed Langflow analysis](case-studies/langflow/ANALYSIS.md).
 
-### Mastra let default-protected custom routes bypass authentication
+## Case study 2. Mastra let default-protected custom routes bypass authentication
 
 Mastra allows developers to register custom API routes that invoke agents, models, tools, workflows, and application code. Its route API states that authentication is enabled by default and can be disabled explicitly with `requiresAuth: false`. Developers using the documented direct server adapters should therefore be able to rely on a default-protected route.
 
@@ -66,9 +64,9 @@ Handler contents determine the impact. Public examples include completion routes
 
 The KIT stated the rule before following adapter code. Every registered custom route must authenticate unless it explicitly sets `requiresAuth: false`. It then compared adapters that constructed route-auth metadata with direct adapters that did not. A targeted canary called Mastra's actual core authentication middleware. With no custom-route map, the request advanced and authentication was never called. Adding the expected map entry produced a 401 response.
 
-## Case study 3
+[Read the detailed Mastra analysis](case-studies/mastra/ANALYSIS.md).
 
-### Daytona could preserve public preview access after a sandbox became private
+## Case study 3. Daytona could preserve public preview access after a sandbox became private
 
 Daytona provides browser-accessible previews for services running inside sandboxes. Public sandboxes can be reached without a preview credential. Private sandboxes require authentication. The proxy caches each sandbox's public status for one hour to avoid an API lookup on every request.
 
@@ -78,9 +76,9 @@ This is a conditional fail-open path. It requires a public-status value to be ca
 
 The KIT modeled privacy change as a state-transition invariant. Once `public=false` commits, no earlier cache state may authorize anonymous preview. The proof construction left a residual path where sandbox state changed while cache state remained `true`. Source review then connected that path to the one-hour cache, swallowed invalidation error, and proxy branch that bypassed authentication. The result is recorded as a likely P1 conditional failure. A full local deployment reproduction was recommended and was not claimed as complete.
 
-## Case study 4
+[Read the detailed Daytona analysis](case-studies/daytona/ANALYSIS.md).
 
-### Onyx treated generated artifacts as readable by every authenticated user
+## Case study 4. Onyx treated generated artifacts as readable by every authenticated user
 
 Onyx stores files produced by image generation and its Python execution tool in a shared FileStore. The authenticated download endpoint normally checks ownership, shared-chat access, persona access, or document ACLs before returning bytes. Generated artifacts used the `CHAT_IMAGE_GEN` origin, including outputs produced by the Python tool.
 
@@ -89,6 +87,8 @@ The access function contained a separate branch for that origin. If a matching F
 Generated artifacts include reports, CSV files, transformed uploads, and outputs derived from private context. The defect can therefore cross user boundaries and disclose material that belongs to another session. Exploitation requires the target file ID. The retained evidence did not establish that IDs were guessable or exposed through a second flaw, so the report treats the authorization failure as confirmed and its P1 impact as conditional.
 
 The KIT classified generated files as authority-bearing objects and required every download to resolve to an owner or an explicit sharing rule. It traced the returned tool URL into the common download endpoint, then compared each authorization branch. Ownership and ACL branches preserved context. The origin-only branch discarded it, causing the file-access claim to fail.
+
+[Read the detailed Onyx analysis](case-studies/onyx/ANALYSIS.md).
 
 ## Evidence boundaries
 

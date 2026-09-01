@@ -21,6 +21,13 @@ The export records no reviewed commit hashes. The four case studies in the repor
 | Daytona | [daytonaio/daytona](https://github.com/daytonaio/daytona) | [`4ee2c6365b851cbc7073ca4cea2f9ebba0caf832`](https://github.com/daytonaio/daytona/commit/4ee2c6365b851cbc7073ca4cea2f9ebba0caf832) | Exact review commit and source-confirmed conditional fail-open. No full deployment reproduction. |
 | Onyx | [onyx-dot-app/onyx](https://github.com/onyx-dot-app/onyx) | [`c424edb5118743443b3438c7e4895d0c962a794a`](https://github.com/onyx-dot-app/onyx/commit/c424edb5118743443b3438c7e4895d0c962a794a) | Exact review commit and source-confirmed authorization failure. No two-user runtime reproduction. |
 
+## Detailed analyses
+
+- [Langflow MCP command validation bypass](case-studies/langflow/ANALYSIS.md)
+- [Mastra default-auth custom route bypass](case-studies/mastra/ANALYSIS.md)
+- [Daytona stale public-preview authorization](case-studies/daytona/ANALYSIS.md)
+- [Onyx generated-artifact authorization gap](case-studies/onyx/ANALYSIS.md)
+
 ## Langflow source paths
 
 - [`src/backend/base/langflow/api/v2/schemas.py`](https://github.com/langflow-ai/langflow/blob/7db38d1abbdc9ae764f8e7e28da64cb5104217f6/src/backend/base/langflow/api/v2/schemas.py#L105-L335)
