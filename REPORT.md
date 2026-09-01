@@ -14,6 +14,8 @@ The tracking export assigns 158 repository entries to five owners. One URL appea
 
 The repository set covers Python, TypeScript, JavaScript, Go, Rust, Solidity, Java, Kotlin, Scala, C#, and Huff as primary implementation languages. Some repositories combine several of these languages. Portfolio size was estimated from repository-scale metadata. The estimate should be read as more than 70 million lines of source across the assigned set.
 
+The portfolio includes AI and agent platforms, web and identity frameworks, developer sandboxes, workflow systems, and blockchain and financial protocols. These projects execute code and tools, hold credentials, isolate users and tenants, control network access, enforce identity, or move assets. Security failures in these systems can affect the applications and users that depend on them.
+
 Each review began with repository acquisition and subsystem mapping. The reviewer identified security-critical assets and roles, recovered intended behavior from public documentation and tests, and wrote explicit invariants for the selected scope. The KIT then guided call-path analysis, dataflow checks, state-transition review, and proof construction. Small canaries were used where a local check could distinguish a real implementation flaw from a speculative proof gap.
 
 The formal layer used K definitions and reachability claims for relevant language fragments. Most packages were constructed proof artifacts rather than completed machine-checked proofs. A constructed claim organizes the security argument and exposes missing preconditions. It does not carry the assurance of a successful proof run. The campaign retained 574 evidence files, including 110 K files, to preserve the reasoning behind the findings.
