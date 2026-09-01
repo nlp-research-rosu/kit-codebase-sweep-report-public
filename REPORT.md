@@ -20,19 +20,19 @@ The formal layer used K definitions and reachability claims for relevant languag
 
 Human work centered on scope selection, setup recovery, evidence review, severity decisions, and report preparation. No normalized timesheet was collected, so person-hour totals are unavailable. The trace for one owner records 29 review sessions, 92 continuation cycles, and 56 repository evidence directories over eight calendar days. These records show an AI-heavy review with intermittent human supervision. No evidence supports ten person-weeks of full-time labor.
 
-The original campaign headline supplied for this report was 85 defects. The current export does not match that headline. A conservative review of its 147 completed rows produced the following minimum distribution.
+The original campaign headline supplied for this report was 85 defects. The current export does not match that headline. A conservative review of its 147 completed rows produced the following table-derived severity distribution.
 
-| Severity | Explicitly enumerated items | Completed rows with this severity |
-| --- | ---: | ---: |
-| P1 Critical | 7 | 7 |
-| P2 High | 27 | 22 |
-| P3 Medium | 29 | 28 |
-| P4 Low | 30 | 25 |
-| P5 Informational | 236 | 65 |
+| Severity | Table-derived findings |
+| --- | ---: |
+| P1 Critical | 7 |
+| P2 High | 27 |
+| P3 Medium | 29 |
+| P4 Low | 30 |
+| P5 Informational | 236 |
 
-The item count expands explicit multipliers such as `P2×3`. The row count records whether a completed entry contains at least one positive label at that severity. The count excludes negated findings, disproven candidates, former severities on downgraded findings, and the ambiguous `P3/P4` label in one row. A repository can contribute findings at several severities.
+The count expands explicit multipliers such as `P2×3`. It excludes negated findings, disproven candidates, former severities on downgraded findings, and the ambiguous `P3/P4` label in one row. A repository can contribute findings at several severities.
 
-The export therefore contains at least 93 explicitly enumerated P1 through P4 findings and 236 P5 items. P5 includes hardening notes, proof gaps, and residual scope risks, so it is not an exploitable-defect count. The difference between the 85-defect headline and the current table cannot be reconciled because the export has no stable defect IDs, counting rule, or dated cutoff. This report preserves 85 as the original headline and presents the table-derived distribution separately.
+The export therefore contains at least 93 explicitly enumerated P1 through P4 findings and 236 P5 findings. P5 includes hardening notes, proof gaps, and residual scope risks, so it is not an exploitable-defect count. The difference between the 85-defect headline and the current table cannot be reconciled because the export has no stable defect IDs, counting rule, or dated cutoff. This report preserves 85 as the original headline and presents the table-derived distribution separately.
 
 The descriptions show recurring defect classes. P1 entries cover financial theft, backend command execution, failed attestation, and severe cross-user exposure. P2 entries include SSRF, cross-tenant mutation, command execution from untrusted CI or workspaces, replay, and missing authorization. P3 entries concentrate on denial of service, stale credentials, cross-user state changes, and validation bypasses. P4 entries are bounded correctness and isolation failures. P5 entries are mostly hardening work, proof gaps, configuration risks, and findings limited by trusted roles or narrow deployment conditions. These categories reflect campaign-owner descriptions in the table and do not independently validate findings from other owners.
 
