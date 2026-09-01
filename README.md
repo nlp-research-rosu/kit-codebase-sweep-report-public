@@ -12,4 +12,4 @@ The report covers campaign scale, review method, human supervision, evidence lim
 - The approximately two-week duration is based on David Bucur's recollection. It is an estimate rather than a timestamped campaign metric.
 - All four case studies come from David's KIT runs because their agent sessions, source revisions, and evidence packages were retained. For the other owners, only the campaign table was available. Their results contribute to the campaign totals but are not used as technical case studies.
 
-The repository omits exploit code and private campaign artifacts. Findings apply to the revisions identified in the source register and should be revalidated against current releases.
+This repository includes the report and public source references only. It excludes the internal campaign table, agent transcripts, scratch files, and proof-of-concept payloads. Each case study describes the code at the commit listed in `SOURCES.md` and does not claim that current releases remain vulnerable.
