@@ -2,7 +2,7 @@
 
 ## Executive summary
 
-An approximately two-week campaign used the KIT to review security-critical paths in a large set of open-source repositories. The assigned queue contained 158 entries representing 157 distinct repository URLs. Five human owners supervised the work. The repositories span more than 70 million estimated lines of code across 11 primary languages. The campaign recorded 85 defects.
+An approximately two-week campaign used the KIT to review security-critical paths in a large set of open-source repositories. The assigned queue contained 158 entries representing 157 distinct repository URLs. Five human owners supervised the work. The repositories span more than 70 million estimated lines of code across 11 primary languages. The original campaign headline reported 85 defects.
 
 The KIT combines intent recovery, security invariant design, focused source analysis, lightweight formal models, proof construction, and targeted validation. It helped reviewers move from a large repository to a small set of security claims, then trace each claim through implementation paths that control authority, assets, process execution, or irreversible state.
 
@@ -20,7 +20,23 @@ The formal layer used K definitions and reachability claims for relevant languag
 
 Human work centered on scope selection, setup recovery, evidence review, severity decisions, and report preparation. No normalized timesheet was collected, so person-hour totals are unavailable. The trace for one owner records 29 review sessions, 92 continuation cycles, and 56 repository evidence directories over eight calendar days. These records show an AI-heavy review with intermittent human supervision. No evidence supports ten person-weeks of full-time labor.
 
-The campaign aggregate is 85 defects. The export does not provide stable per-defect identifiers or a normalized severity table, so this report does not infer a severity distribution. The four case studies below have pinned review commits and retained KIT evidence packages. Langflow and Mastra include targeted validation canaries. Daytona and Onyx are source-confirmed boundary failures whose full deployment impact remains conditional.
+The original campaign headline supplied for this report was 85 defects. The current export does not match that headline. A conservative review of its 147 completed rows produced the following minimum distribution.
+
+| Severity | Explicitly enumerated items | Completed rows with this severity |
+| --- | ---: | ---: |
+| P1 Critical | 7 | 7 |
+| P2 High | 27 | 22 |
+| P3 Medium | 29 | 28 |
+| P4 Low | 30 | 25 |
+| P5 Informational | 236 | 65 |
+
+The item count expands explicit multipliers such as `P2×3`. The row count records whether a completed entry contains at least one positive label at that severity. The count excludes negated findings, disproven candidates, former severities on downgraded findings, and the ambiguous `P3/P4` label in one row. A repository can contribute findings at several severities.
+
+The export therefore contains at least 93 explicitly enumerated P1 through P4 findings and 236 P5 items. P5 includes hardening notes, proof gaps, and residual scope risks, so it is not an exploitable-defect count. The difference between the 85-defect headline and the current table cannot be reconciled because the export has no stable defect IDs, counting rule, or dated cutoff. This report preserves 85 as the original headline and presents the table-derived distribution separately.
+
+The descriptions show recurring defect classes. P1 entries cover financial theft, backend command execution, failed attestation, and severe cross-user exposure. P2 entries include SSRF, cross-tenant mutation, command execution from untrusted CI or workspaces, replay, and missing authorization. P3 entries concentrate on denial of service, stale credentials, cross-user state changes, and validation bypasses. P4 entries are bounded correctness and isolation failures. P5 entries are mostly hardening work, proof gaps, configuration risks, and findings limited by trusted roles or narrow deployment conditions. These categories reflect campaign-owner descriptions in the table and do not independently validate findings from other owners.
+
+The four case studies below have pinned review commits and retained KIT evidence packages. Langflow and Mastra include targeted validation canaries. Daytona and Onyx are source-confirmed boundary failures whose full deployment impact remains conditional.
 
 ## Case study 1
 
@@ -80,4 +96,4 @@ The K packages for all four cases were constructed rather than machine-checked. 
 
 ## Conclusion
 
-Across 158 assigned entries, the KIT converted public intent into security invariants and focused source checks. The campaign recorded 85 defects. Four session-backed cases exposed backend command execution, an authentication fail-open, a stale privacy decision, and a cross-user artifact authorization gap. Pinned commits and focused canaries made the strongest claims reviewable. Daytona and Onyx still require full deployment reproductions, and the K packages remain constructed rather than machine-checked.
+Across 158 assigned entries, the KIT converted public intent into security invariants and focused source checks. The original campaign headline reported 85 defects, while the current export contains at least 93 P1 through P4 findings and 236 P5 items under a conservative text-derived count. Four session-backed cases exposed backend command execution, an authentication fail-open, a stale privacy decision, and a cross-user artifact authorization gap. Pinned commits and focused canaries made the strongest claims reviewable. Daytona and Onyx still require full deployment reproductions, and the K packages remain constructed rather than machine-checked.

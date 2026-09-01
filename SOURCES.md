@@ -4,7 +4,11 @@
 
 The campaign totals come from the internal Applied Evidence export used for this paper. The export contains 171 repository rows. Of these, 158 were assigned to an owner and 147 were marked Complete with a result. The assigned set contains 157 distinct repository URLs because Langflow appears twice. Thirteen unassigned rows are excluded.
 
-The supplied campaign aggregate is 85 defects. The export has free-form result summaries rather than one normalized row per defect. It is therefore unsuitable for deriving an independent defect count or severity distribution.
+The original supplied campaign headline is 85 defects. The current export has free-form summaries and no stable defect IDs, counting rule, or dated cutoff. Its contents cannot be reconciled directly with that headline.
+
+The report includes a conservative text-derived severity count from all 147 completed rows. Positive labels and explicit multipliers are counted. Negated findings, disproven candidates, downgraded former severities, and one ambiguous `P3/P4` label are excluded. This produces minimum counts of 7 P1, 27 P2, 29 P3, 30 P4, and 236 P5 items. The corresponding numbers of completed rows are 7, 22, 28, 25, and 65. Rows can appear at several severities.
+
+These counts classify the campaign-owner descriptions in the export. They do not independently confirm findings from owners whose agent sessions are unavailable. P5 includes hardening notes, proof gaps, and residual scope risks.
 
 The export records no reviewed commit hashes. The four case studies in the report use commits recovered from retained KIT sessions and their evidence packages.
 
